@@ -1,0 +1,16 @@
+node_modules
+dist
+build
+.env
+.next
+.git
+.husky
+.vscode
+.editorconfig
+.prettierignore
+.prettierrc
+.eslintrc.json
+.eslintignore
+.eslintcache
+.eslintrc.json
+.eslintignore
