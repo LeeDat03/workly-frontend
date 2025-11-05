@@ -1,10 +1,9 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
 
-// Get backend URL from environment variable or use default
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8080';
+const BACKEND_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api/v1';
 
 const api = axios.create({
-    baseURL: `${BACKEND_URL}/api/v1`,
+    baseURL: BACKEND_URL,
     withCredentials: true,
     headers: {
         'Content-Type': 'application/json',
