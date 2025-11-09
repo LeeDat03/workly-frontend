@@ -19,6 +19,12 @@ export interface MediaItem {
     type: MediaType;
 }
 
+export interface CreatePostDTO {
+    content: string;
+    media_url: MediaItem[];
+    visibility: PostVisibilityType;
+}
+
 export interface PostResponse {
     _id: string;
     author_type: AuthorType;
