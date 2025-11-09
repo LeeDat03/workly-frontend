@@ -4,6 +4,7 @@ export const paths = {
     signin: '/signin',
     signup: '/signup',
     profile: '/user/profile',
+    testPost: '/test',
     // Example of a dynamic route
     postDetail: (id: string) => `/posts/${id}`,
 };
