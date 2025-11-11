@@ -10,7 +10,7 @@ import { useGetUserProfile } from '@/hooks/useQueryData';
 import { UserProfile } from '@/types/global';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
-import ProfileSkeleton from '@/app/(userProfile)/settings/_components/ProfileSkeleton';
+import ProfileSkeleton from '../../settings/_components/ProfileSkeleton';
 
 interface TabConfig {
     label: string;

@@ -24,10 +24,6 @@ const SignInPage = () => {
         formState: { errors },
     } = useForm<LoginFormData>({
         resolver: zodResolver(loginSchema),
-        defaultValues: {
-            email: 'onboarding@gmail.com',
-            password: 'Password@123',
-        },
     });
 
     const onSubmit = async (data: LoginFormData) => {
@@ -37,7 +33,6 @@ const SignInPage = () => {
                 ...data,
                 redirect: false,
             });
-            console.log('result', result);
             if (result?.error) {
                 return toast('login error');
             }

@@ -7,7 +7,7 @@ import Credentials from 'next-auth/providers/credentials';
 const BACKEND_API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 if (!BACKEND_API_URL) {
-    throw new Error('Missing NEXT_PUBLIC_BACKEND_API_URL environment variable');
+    throw new Error('Missing environment variable');
 }
 
 export const { handlers, auth } = NextAuth({
@@ -89,7 +89,6 @@ export const { handlers, auth } = NextAuth({
         async jwt({ token, user }) {
             if (user) {
                 return {
-                    ...token,
                     user,
                     token: user.token,
                 };
@@ -97,8 +96,6 @@ export const { handlers, auth } = NextAuth({
             return token;
         },
         async session({ session, token }) {
-            console.log('token11111', token);
-
             // @ts-ignore
             session.token = token.token;
             // @ts-ignore

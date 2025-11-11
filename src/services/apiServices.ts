@@ -1,16 +1,13 @@
-import { fetchWithCookie } from '@/lib/fetcher';
 import { CreateCompanyFormData, EditCompanyFormData } from '@/lib/validations/company';
 import {
     ChangePasswordFormData,
     EditUserEducationFormData,
     EditUserProfileFormData,
-    EditUserSkillsFormData,
 } from '@/lib/validations/user';
 import api from '@/utils/api';
 
 export const postCompanyPage = async (company: CreateCompanyFormData) => {
     try {
-        console.log('company: ', company);
         const { data } = await api.post('/companies', company);
 
         return {
@@ -65,20 +62,25 @@ export const patchUserProfile = async (formData: EditUserProfileFormData) => {
 };
 
 export async function patchUserSkills(formData: { skillIds: string[] }) {
-    const { ok, data } = await fetchWithCookie('/me/skills', {
-        method: 'PATCH',
-        body: JSON.stringify(formData),
-    });
+    try {
+        const { data } = await api.patch('/users/me/skills', formData);
 
-    return {
-        success: ok,
-        message: data?.message || (ok ? 'Updated' : 'Failed'),
-    };
+        return {
+            status: 'success',
+            success: true,
+            data: data.data,
+        };
+    } catch (error: any) {
+        return {
+            status: 'error',
+            success: false,
+            message: error?.message || 'Unknown error',
+        };
+    }
 }
 
 export const patchUserEducation = async (formData: EditUserEducationFormData) => {
     try {
-        // BE của bạn (updateUserEducations) mong đợi một mảng (array)
         const { data } = await api.patch('/users/me/educations', formData.educations);
 
         return {
@@ -97,7 +99,6 @@ export const patchUserEducation = async (formData: EditUserEducationFormData) =>
 
 export const patchChangePassword = async (formData: ChangePasswordFormData) => {
     try {
-        // API BE của bạn chỉ cần 'currentPassword' và 'newPassword'
         const payload = {
             currentPassword: formData.currentPassword,
             newPassword: formData.newPassword,
@@ -121,8 +122,6 @@ export const patchChangePassword = async (formData: ChangePasswordFormData) => {
 
 export const deleteMyAccount = async () => {
     try {
-        // "Bộ chặn" (interceptor) trong api.ts sẽ tự động gắn token
-        // API BE của bạn là "/users/me"
         const { data } = await api.delete('/users/me');
 
         return {

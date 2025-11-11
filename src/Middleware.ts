@@ -8,7 +8,7 @@ export const config = {
 const nextAuthMiddleware = auth((req) => {
     const session = req.auth;
     const nextUrl = req.nextUrl;
-    console.log('session', session, nextUrl);
+
     if (session && nextUrl.pathname === '/signin') {
         return NextResponse.redirect(new URL('/home', nextUrl));
     }
