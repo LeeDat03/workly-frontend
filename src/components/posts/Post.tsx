@@ -62,6 +62,8 @@ const Post = ({ post }: PostProps) => {
                         <Image
                             src="/default-avatar.png"
                             alt="User Avatar"
+                            width={500} // Bắt buộc phải có width và height
+                            height={300}
                             className="w-10 h-10 rounded-full object-cover"
                         />
                         <div className="flex flex-col">
@@ -106,6 +108,8 @@ const Post = ({ post }: PostProps) => {
                                 <Image
                                     src={StringUtil.generatePath(currentMedia.url)}
                                     alt="post image"
+                                    width={500} // Bắt buộc phải có width và height
+                                    height={300}
                                     className="w-full max-h-[500px] object-contain"
                                 />
                             )}
@@ -118,6 +122,8 @@ const Post = ({ post }: PostProps) => {
                                             <Image
                                                 src={`${StringUtil.generatePath(currentMedia.url)}?thumbnail=true`}
                                                 alt="video thumbnail"
+                                                width={500} // Bắt buộc phải có width và height
+                                                height={300}
                                                 className="w-full max-h-[500px] object-cover opacity-80"
                                             />
                                             <button
