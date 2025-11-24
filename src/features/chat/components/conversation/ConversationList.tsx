@@ -46,20 +46,20 @@ export function ConversationList({
     });
 
     return (
-        <div className="flex h-full w-80 flex-col border-l bg-white">
+        <div className="flex h-full w-80 flex-col border-r">
             {/* Header */}
-            <div className="border-b p-4">
-                <h2 className="mb-3 text-xl font-semibold text-gray-900">Tin nhắn</h2>
+            <div className="border-b p-4 bg-muted/20">
+                <h2 className="mb-3 text-xl font-semibold">Tin nhắn</h2>
 
                 {/* Search */}
                 <div className="relative">
-                    <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                    <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground pointer-events-none" />
                     <Input
                         type="text"
-                        placeholder="Tìm kiếm cuộc trò chuyện..."
+                        placeholder="Tìm kiếm tin nhắn..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="pl-10"
+                        className="pl-10 h-9 bg-background border-border/50 focus-visible:ring-1 focus-visible:ring-primary/20 hover:border-primary/30 transition-colors"
                     />
                 </div>
             </div>
@@ -67,13 +67,17 @@ export function ConversationList({
             {/* Conversations List */}
             <div className="flex-1 overflow-y-auto">
                 {isLoading ? (
-                    <LoadingSpinner message="Đang tải cuộc trò chuyện..." />
+                    <div className="flex items-center justify-center py-12">
+                        <LoadingSpinner message="Đang tải..." />
+                    </div>
                 ) : sortedConversations.length === 0 ? (
-                    <EmptyState
-                        message={
-                            searchQuery ? 'Không tìm thấy kết quả' : 'Chưa có cuộc trò chuyện nào'
-                        }
-                    />
+                    <div className="flex flex-col items-center justify-center py-12 px-6">
+                        <EmptyState
+                            message={
+                                searchQuery ? 'Không tìm thấy kết quả' : 'Chưa có cuộc trò chuyện nào'
+                            }
+                        />
+                    </div>
                 ) : (
                     sortedConversations.map((conversation) => (
                         <ConversationItem
