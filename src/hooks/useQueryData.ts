@@ -151,3 +151,8 @@ export function useGetConversationById(conversationId: string) {
 export function useGetMessages(conversationId: string, queryParams: Record<string, any> = {}) {
     return useData([`/messages/${conversationId}`, queryParams], getDataWithStatus);
 }
+
+// Company management queries
+export function useGetMyCompanies(queryParams: Record<string, any> = {}) {
+    return useData(['/companies/my-companies', queryParams], getDataWithStatus);
+}

@@ -106,14 +106,14 @@ export default function ChatCompanyPage() {
 
     if (isLoadingAuth) {
         return (
-            <div className="flex h-screen items-center justify-center bg-gray-50">
+            <div className="flex h-full items-center justify-center">
                 <LoadingSpinner size="lg" message="Đang tải..." />
             </div>
         );
     }
 
     return (
-        <div className="flex h-screen">
+        <div className="flex h-full">
             <ConversationList
                 conversations={conversations}
                 currentUserId={currentUserId}
@@ -126,18 +126,18 @@ export default function ChatCompanyPage() {
 
             <div className="flex-1">
                 {isLoading ? (
-                    <div className="flex h-full items-center justify-center bg-gray-50">
+                    <div className="flex h-full items-center justify-center">
                         <LoadingSpinner size="lg" message="Đang tải cuộc trò chuyện..." />
                     </div>
                 ) : fullChatId ? (
                     <ChatView conversationId={fullChatId} onClose={handleClose} />
                 ) : (
-                    <div className="flex h-full items-center justify-center bg-gray-50">
-                        <div className="text-center">
-                            <h2 className="mb-2 text-2xl font-semibold text-gray-700">
+                    <div className="flex h-full items-center justify-center">
+                        <div className="text-center px-6">
+                            <h2 className="mb-2 text-2xl font-semibold">
                                 Không thể tải cuộc trò chuyện
                             </h2>
-                            <p className="text-gray-500">Vui lòng thử lại sau.</p>
+                            <p className="text-muted-foreground">Vui lòng thử lại sau.</p>
                         </div>
                     </div>
                 )}

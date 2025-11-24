@@ -70,8 +70,10 @@ export function ConversationItem({
 
     return (
         <div
-            className={`relative flex w-full items-center gap-3 border-b p-4 transition-colors ${
-                isActive ? 'bg-blue-50 hover:bg-blue-100' : 'hover:bg-gray-50'
+            className={`relative flex w-full items-center gap-3 border-b border-border/50 p-4 transition-all ${
+                isActive 
+                    ? 'bg-primary/10 hover:bg-primary/15 border-l-4 border-l-primary' 
+                    : 'hover:bg-accent/50 cursor-pointer'
             }`}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
@@ -94,13 +96,13 @@ export function ConversationItem({
                     <div className="flex items-center justify-between">
                         <h3
                             className={`truncate font-medium ${
-                                myUnreadCount > 0 ? 'font-semibold text-gray-900' : 'text-gray-900'
+                                myUnreadCount > 0 ? 'font-semibold' : ''
                             }`}
                         >
                             {otherParticipant.name}
                         </h3>
                         {lastMessageAt && (
-                            <span className="ml-2 text-xs text-gray-500">
+                            <span className="ml-2 text-xs text-muted-foreground">
                                 {formatConversationTime(lastMessageAt)}
                             </span>
                         )}
@@ -109,14 +111,14 @@ export function ConversationItem({
                     <div className="flex items-center justify-between">
                         <p
                             className={`truncate text-sm ${
-                                myUnreadCount > 0 ? 'font-medium text-gray-900' : 'text-gray-500'
+                                myUnreadCount > 0 ? 'font-medium' : 'text-muted-foreground'
                             }`}
                         >
                             {lastMessage?.content || 'Chưa có tin nhắn'}
                         </p>
 
                         {myUnreadCount > 0 && (
-                            <span className="ml-2 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-blue-500 px-1.5 text-xs font-bold text-white">
+                            <span className="ml-2 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-primary px-1.5 text-xs font-bold text-primary-foreground">
                                 {formatUnreadCount(myUnreadCount)}
                             </span>
                         )}
@@ -133,16 +135,16 @@ export function ConversationItem({
                                 e.stopPropagation();
                                 setIsMenuOpen(!isMenuOpen);
                             }}
-                            className="absolute right-2 top-2 rounded-full p-1.5 hover:bg-gray-200 transition-colors"
+                            className="absolute right-2 top-2 rounded-full p-1.5 hover:bg-accent transition-colors"
                         >
-                            <MoreVertical className="h-4 w-4 text-gray-600" />
+                            <MoreVertical className="h-4 w-4 text-muted-foreground" />
                         </button>
                     </PopoverTrigger>
                     <PopoverContent className="w-48 p-0" align="end">
                         <div className="flex flex-col">
                             <button
                                 onClick={handleViewProfile}
-                                className="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                                className="flex items-center gap-2 px-4 py-2.5 text-sm hover:bg-accent transition-colors"
                             >
                                 {otherParticipant.type === ParticipantType.COMPANY ? (
                                     <Building2 className="h-4 w-4" />
@@ -153,7 +155,7 @@ export function ConversationItem({
                             </button>
                             <button
                                 onClick={handleDeleteClick}
-                                className="flex items-center gap-2 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                                className="flex items-center gap-2 px-4 py-2.5 text-sm text-destructive hover:bg-destructive/10 transition-colors"
                             >
                                 <Trash2 className="h-4 w-4" />
                                 <span>Xóa cuộc trò chuyện</span>
@@ -178,7 +180,7 @@ export function ConversationItem({
                         <AlertDialogCancel>Hủy</AlertDialogCancel>
                         <AlertDialogAction
                             onClick={handleConfirmDelete}
-                            className="bg-red-600 hover:bg-red-700"
+                            className="bg-destructive hover:bg-destructive/90"
                         >
                             Xóa
                         </AlertDialogAction>

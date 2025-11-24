@@ -72,14 +72,14 @@ export default function ChatPage() {
 
     if (isLoading) {
         return (
-            <div className="flex h-screen items-center justify-center bg-gray-50">
+            <div className="flex h-full items-center justify-center">
                 <LoadingSpinner size="lg" message="Đang tải..." />
             </div>
         );
     }
 
     return (
-        <div className="flex h-screen">
+        <div className="flex h-full">
             <ConversationList
                 conversations={conversations}
                 currentUserId={currentUserId}
@@ -90,16 +90,16 @@ export default function ChatPage() {
                 isLoading={isLoadingConversations}
             />
 
-            <div className="flex flex-1 items-center justify-center bg-gray-50">
-                <div className="text-center">
-                    <div className="mb-4 flex justify-center">
-                        <div className="rounded-full bg-blue-100 p-6">
-                            <MessageCircle className="h-16 w-16 text-blue-500" />
+            <div className="flex flex-1 items-center justify-center">
+                <div className="text-center px-6">
+                    <div className="mb-6 flex justify-center">
+                        <div className="rounded-full bg-primary/10 p-8">
+                            <MessageCircle className="h-20 w-20 text-primary" />
                         </div>
                     </div>
-                    <h2 className="mb-2 text-2xl font-semibold text-gray-700">Tin nhắn</h2>
-                    <p className="text-gray-500">
-                        Chọn một cuộc trò chuyện từ danh sách bên trái để bắt đầu nhắn tin
+                    <h2 className="mb-3 text-2xl font-semibold">Tin nhắn của bạn</h2>
+                    <p className="text-muted-foreground max-w-md mx-auto">
+                        Chọn một cuộc trò chuyện từ danh sách bên trái để bắt đầu nhắn tin hoặc tạo cuộc trò chuyện mới
                     </p>
                 </div>
             </div>
