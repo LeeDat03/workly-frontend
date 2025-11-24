@@ -10,6 +10,7 @@ import { ParticipantType } from '@/features/chat/types';
 import { LoadingSpinner } from '@/features/chat/components/ui';
 import { getUserById } from '@/features/chat';
 import { useAuth } from '@/hooks/useAuth';
+import { TOKEN_KEY } from '@/constants';
 
 export default function ChatUserPage() {
     const params = useParams();
@@ -17,7 +18,7 @@ export default function ChatUserPage() {
 
     const userId = params.userId as string;
 
-    const { isLoading: isLoadingAuth } = useAuth();
+    const { isLoading: isLoadingAuth, user } = useAuth();
 
     const {
         fullChatId,
@@ -27,30 +28,54 @@ export default function ChatUserPage() {
         isLoadingConversations,
         currentUserId,
         isSocketConnected,
+        initialize,
+        loadConversations,
+        deleteConversation,
     } = useChat();
 
     const [isLoading, setIsLoading] = useState(false);
 
-    const handleCallAPI = async () => {
-        if (!userId) return;
-
-        if (!isSocketConnected) return;
-        const { data } = await getUserById(userId);
-        if (!data) return;
-        setIsLoading(true);
-
-        startConversation(userId, ParticipantType.USER, true)
-            .catch((err) => {
-                toast.error(err.message || 'Không thể tạo cuộc trò chuyện.');
-            })
-            .finally(() => {
-                setIsLoading(false);
-            });
-    };
-
+    // Initialize socket and load conversations
     useEffect(() => {
-        handleCallAPI();
-    }, [userId, isSocketConnected, startConversation]);
+        if (!user?.userId) return;
+
+        const token = localStorage.getItem(TOKEN_KEY);
+        if (!token) {
+            console.error('No token found');
+            return;
+        }
+
+        // Initialize socket connection
+        initialize(user.userId, ParticipantType.USER, token);
+
+        // Load conversations
+        loadConversations();
+    }, [user?.userId, initialize, loadConversations]);
+
+    // Create or get conversation with user
+    useEffect(() => {
+        if (!userId || !isSocketConnected) return;
+
+        const handleStartConversation = async () => {
+            try {
+                const { data } = await getUserById(userId);
+                if (!data) {
+                    toast.error('Không tìm thấy người dùng.');
+                    return;
+                }
+
+                setIsLoading(true);
+                await startConversation(userId, ParticipantType.USER, true);
+            } catch (err: any) {
+                console.error('Error starting conversation:', err);
+                toast.error(err.message || 'Không thể tạo cuộc trò chuyện.');
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        handleStartConversation();
+    }, [userId, isSocketConnected]);
 
     const handleSelectConversation = (conversationId: string) => {
         const conversation = conversations.find((c) => c._id === conversationId);
@@ -61,6 +86,26 @@ export default function ChatUserPage() {
             } else {
                 router.push(`/chat/user/${conversation.otherParticipant.id}`);
             }
+        }
+    };
+
+    const handleDeleteConversation = async (conversationId: string) => {
+        try {
+            await deleteConversation(conversationId);
+            // If deleted conversation is the current one, go back to chat list
+            if (conversationId === fullChatId) {
+                router.push('/chat');
+            }
+        } catch (error) {
+            console.error('Error deleting conversation:', error);
+        }
+    };
+
+    const handleViewProfile = (participantId: string, participantType: ParticipantType) => {
+        if (participantType === ParticipantType.COMPANY) {
+            router.push(`/company/${participantId}`);
+        } else {
+            router.push(`/profile/${participantId}`);
         }
     };
 
@@ -83,6 +128,8 @@ export default function ChatUserPage() {
                 conversations={conversations}
                 currentUserId={currentUserId}
                 onSelectConversation={handleSelectConversation}
+                onDeleteConversation={handleDeleteConversation}
+                onViewProfile={handleViewProfile}
                 activeConversationId={fullChatId}
                 isLoading={isLoadingConversations}
             />

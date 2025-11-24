@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 import { ConversationList } from '@/features/chat/components';
 import { useChat } from '@/features/chat/hooks/useChat';
@@ -8,12 +9,38 @@ import { LoadingSpinner } from '@/features/chat/components/ui';
 import { ParticipantType } from '@/features/chat/types';
 import { MessageCircle } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import { TOKEN_KEY } from '@/constants';
 
 export default function ChatPage() {
     const router = useRouter();
-    const { isLoading } = useAuth();
+    const { isLoading, user } = useAuth();
 
-    const { conversations, isLoadingConversations, currentUserId } = useChat();
+    const { 
+        conversations, 
+        isLoadingConversations, 
+        currentUserId, 
+        initialize, 
+        loadConversations,
+        deleteConversation 
+    } = useChat();
+    console.log('Conversations:', conversations);
+
+    // Initialize socket and load conversations
+    useEffect(() => {
+        if (!user?.userId) return;
+
+        const token = localStorage.getItem(TOKEN_KEY);
+        if (!token) {
+            console.error('No token found');
+            return;
+        }
+
+        // Initialize socket connection
+        initialize(user.userId, ParticipantType.USER, token);
+
+        // Load conversations
+        loadConversations();
+    }, [user?.userId, initialize, loadConversations]);
 
     const handleSelectConversation = (conversationId: string) => {
         const conversation = conversations.find((c) => c._id === conversationId);
@@ -24,6 +51,22 @@ export default function ChatPage() {
             } else {
                 router.push(`/chat/user/${conversation.otherParticipant.id}`);
             }
+        }
+    };
+
+    const handleDeleteConversation = async (conversationId: string) => {
+        try {
+            await deleteConversation(conversationId);
+        } catch (error) {
+            console.error('Error deleting conversation:', error);
+        }
+    };
+
+    const handleViewProfile = (participantId: string, participantType: ParticipantType) => {
+        if (participantType === ParticipantType.COMPANY) {
+            router.push(`/company/${participantId}`);
+        } else {
+            router.push(`/profile/${participantId}`);
         }
     };
 
@@ -41,6 +84,8 @@ export default function ChatPage() {
                 conversations={conversations}
                 currentUserId={currentUserId}
                 onSelectConversation={handleSelectConversation}
+                onDeleteConversation={handleDeleteConversation}
+                onViewProfile={handleViewProfile}
                 activeConversationId={null}
                 isLoading={isLoadingConversations}
             />
