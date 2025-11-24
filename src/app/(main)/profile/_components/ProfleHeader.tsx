@@ -210,9 +210,11 @@ const ProfleHeader = ({
                             </Button>
                         ) : (
                             <div className="flex items-center gap-2">
-                                <Button variant="outline">
-                                    <MessageSquareIcon className="w-4 h-4" />
-                                    Message
+                                <Button variant="outline" asChild>
+                                    <Link href={`/chat/user/${userProfile.userId}`}>
+                                        <MessageSquareIcon className="w-4 h-4" />
+                                        Message
+                                    </Link>
                                 </Button>
                                 <Button
                                     variant="outline"

@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { useSession } from 'next-auth/react';
+import { useAuth } from '@/hooks/useAuth';
+import { TOKEN_KEY } from '@/constants';
 import { useChatStore } from '../store';
 import { ParticipantType } from '../types';
 
@@ -10,24 +11,24 @@ interface CompanyChatInitializerProps {
 }
 
 export function CompanyChatInitializer({ companyId }: CompanyChatInitializerProps) {
-    const { data: session, status } = useSession();
+    const { user, isLoading, isAuthenticated } = useAuth();
 
     const initializeSocket = useChatStore((state) => state.initializeSocket);
     const disconnectSocket = useChatStore((state) => state.disconnectSocket);
     const loadConversations = useChatStore((state) => state.loadConversations);
     const currentUserId = useChatStore((state) => state.currentUserId);
     const isSocketConnected = useChatStore((state) => state.isSocketConnected);
-
-    // 🔥 ADD THIS
     const setCurrentUser = useChatStore((state) => state.setCurrentUser);
-    // 🔥 END ADD
 
     const isInitialized = useRef(false);
     const lastCompanyId = useRef<string | null>(null);
 
     useEffect(() => {
-        if (status !== 'authenticated') return;
-        if (!companyId || !session?.apiToken) return;
+        if (isLoading) return;
+        if (!isAuthenticated || !user) return;
+        
+        const token = typeof window !== 'undefined' ? localStorage.getItem(TOKEN_KEY) : null;
+        if (!companyId || !token) return;
 
         console.log('🏢 CompanyChatInitializer: Effect triggered', {
             companyId,
@@ -66,18 +67,19 @@ export function CompanyChatInitializer({ companyId }: CompanyChatInitializerProp
 
         // Now safely initialize socket
         console.log('🔌 Initializing socket for company');
-        initializeSocket(companyId, ParticipantType.COMPANY, session.apiToken);
+        initializeSocket(companyId, ParticipantType.COMPANY, token);
 
         isInitialized.current = true;
         lastCompanyId.current = companyId;
     }, [
-        status,
+        isLoading,
+        isAuthenticated,
+        user,
         companyId,
-        session?.apiToken,
         currentUserId,
         initializeSocket,
         disconnectSocket,
-        setCurrentUser, // ensure effect re-runs if setCurrentUser changes
+        setCurrentUser,
     ]);
 
     // Load conversations once socket is connected

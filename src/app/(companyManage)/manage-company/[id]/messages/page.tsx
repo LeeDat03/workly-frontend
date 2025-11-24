@@ -1,7 +1,6 @@
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
-import { useSession } from 'next-auth/react';
 import { MessageCircle } from 'lucide-react';
 
 import { ConversationList } from '@/features/chat/components';
@@ -9,12 +8,12 @@ import { CompanyChatInitializer } from '@/features/chat/components/CompanyChatIn
 import { useCompanyChat } from '@/features/chat/hooks/useCompanyChat';
 import { LoadingSpinner } from '@/features/chat/components/ui';
 import { Card, CardContent } from '@/components/ui/card';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function CompanyMessagesPage() {
     const router = useRouter();
     const { id: companyId } = useParams<{ id: string }>();
-    const { status } = useSession();
-
+    const { isLoading } = useAuth();
     const { conversations, currentUserId, isLoadingConversations, isSocketConnected } =
         useCompanyChat(companyId);
     console.log('conversations11111111', conversations);

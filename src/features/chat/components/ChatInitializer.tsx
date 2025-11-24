@@ -1,10 +1,11 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { useSession } from 'next-auth/react';
 import { usePathname } from 'next/navigation';
 import { useChat } from '../hooks/useChat';
 import { ParticipantType } from '../types';
+import { useAuth } from '@/hooks/useAuth';
+import { TOKEN_KEY } from '@/constants';
 
 /**
  * ChatInitializer - Initialize chat socket and load conversations
@@ -12,7 +13,7 @@ import { ParticipantType } from '../types';
  * Automatically skips initialization in company management routes
  */
 export function ChatInitializer() {
-    const { data: session, status } = useSession();
+    const { user, isLoading, isAuthenticated } = useAuth();
     const pathname = usePathname();
     const { initialize, isSocketConnected, loadConversations, currentUserId, conversations } =
         useChat();
@@ -22,8 +23,9 @@ export function ChatInitializer() {
     const isCompanyRoute = pathname?.startsWith('/manage-company');
 
     console.log('👤 ChatInitializer:', {
-        status,
-        userId: session?.user?.id,
+        isLoading,
+        isAuthenticated,
+        userId: user?.userId,
         isSocketConnected,
         currentUserId,
         conversationsCount: conversations.length,
@@ -34,20 +36,24 @@ export function ChatInitializer() {
 
     // Initialize socket when user is authenticated (skip in company routes)
     useEffect(() => {
-        if (status !== 'authenticated') return;
+        if (isLoading) return;
+        if (!isAuthenticated || !user) return;
         if (isCompanyRoute) {
             console.log('👤 Skipping ChatInitializer - in company management route');
             return;
         }
 
-        //     const uid = session?.user?.id;
-        //     const token = session?.apiToken;
+        const uid = user.userId;
+        const token = typeof window !== 'undefined' ? localStorage.getItem(TOKEN_KEY) : null;
 
-        //     if (!uid || !token) return;
+        if (!uid || !token) {
+            console.warn('👤 Missing uid or token for chat initialization');
+            return;
+        }
 
         console.log('👤 Initializing personal chat socket...', { uid });
         initialize(uid, ParticipantType.USER, token);
-    }, [status, session, initialize, isCompanyRoute]);
+    }, [isLoading, isAuthenticated, user, initialize, isCompanyRoute]);
 
     // Load conversations when socket connected (only once)
     useEffect(() => {

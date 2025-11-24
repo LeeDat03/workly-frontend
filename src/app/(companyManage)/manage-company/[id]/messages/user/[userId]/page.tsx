@@ -1,7 +1,7 @@
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
-import { useSession } from 'next-auth/react';
+import { useAuth } from '@/hooks/useAuth';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -16,7 +16,7 @@ import { Card, CardContent } from '@/components/ui/card';
 export default function CompanyUserChatPage() {
     const router = useRouter();
     const { id: companyId, userId } = useParams<{ id: string; userId: string }>();
-    const { status } = useSession();
+    const { isLoading: isAuthLoading } = useAuth();
 
     const {
         fullChatId,
@@ -80,7 +80,7 @@ export default function CompanyUserChatPage() {
         router.push(`/manage-company/${companyId}/messages`);
     };
 
-    if (status === 'loading') {
+    if (isAuthLoading) {
         return (
             <div className="flex h-[600px] items-center justify-center">
                 <LoadingSpinner size="lg" message="Đang tải..." />

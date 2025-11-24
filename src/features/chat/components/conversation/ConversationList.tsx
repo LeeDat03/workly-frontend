@@ -4,13 +4,15 @@ import { useState } from 'react';
 import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { ConversationItem } from './ConversationItem';
-import { ConversationWithUserInfo } from '../../types';
+import { ConversationWithUserInfo, ParticipantType } from '../../types';
 import { EmptyState, LoadingSpinner } from '../ui';
 
 interface ConversationListProps {
     conversations: ConversationWithUserInfo[];
     currentUserId: string | null;
     onSelectConversation: (conversationId: string) => void;
+    onDeleteConversation: (conversationId: string) => void;
+    onViewProfile: (participantId: string, participantType: ParticipantType) => void;
     activeConversationId?: string | null;
     isLoading?: boolean;
 }
@@ -19,6 +21,8 @@ export function ConversationList({
     conversations,
     currentUserId,
     onSelectConversation,
+    onDeleteConversation,
+    onViewProfile,
     activeConversationId = null,
     isLoading = false,
 }: ConversationListProps) {
@@ -77,6 +81,8 @@ export function ConversationList({
                             conversation={conversation}
                             currentUserId={currentUserId}
                             onClick={onSelectConversation}
+                            onDelete={onDeleteConversation}
+                            onViewProfile={onViewProfile}
                             isActive={conversation._id === activeConversationId}
                         />
                     ))

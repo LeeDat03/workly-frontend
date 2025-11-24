@@ -42,16 +42,16 @@ messageApi.interceptors.request.use(
         // Get current chat identity
         const identity = getCurrentChatIdentity();
 
-        // ONLY add headers if identity is DIFFERENT from JWT (company mode)
-        if (identity && session?.user?.id) {
-            const jwtUserId = session.user.id;
-            const isDifferentIdentity =
-                identity.userId !== jwtUserId || identity.userType !== 'USER';
+        // Add identity override headers if present (for company mode)
+        // The backend will use these headers if provided, otherwise use JWT identity
+        if (identity) {
+            config.headers['x-user-id'] = identity.userId;
+            config.headers['x-user-type'] = identity.userType;
 
-            if (isDifferentIdentity) {
-                config.headers['x-user-id'] = identity.userId;
-                config.headers['x-user-type'] = identity.userType;
-            }
+            console.log('🔄 Adding identity headers:', {
+                userId: identity.userId,
+                userType: identity.userType,
+            });
         }
 
         return config;

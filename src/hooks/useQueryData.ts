@@ -80,19 +80,19 @@ export function useGetMe() {
 }
 
 export function useGetSkills(queryParams: Record<string, any> = {}) {
-    return useData([`skills`, queryParams], getDataWithStatus);
+    return useData([`/skills`, queryParams], getDataWithStatus);
 }
 
 export function useGetAllSkills(queryParams: Record<string, any> = {}) {
-    return useData(['/users/skills', queryParams], getDataWithStatus);
+    return useData(['/skills', queryParams], getDataWithStatus);
 }
 
 export function useGetSchools(queryParams: Record<string, any> = {}) {
-    return useData([`schools`, queryParams], getDataWithStatus);
+    return useData([`/schools`, queryParams], getDataWithStatus);
 }
 
 export function useGetAllSchools(queryParams: Record<string, any> = {}) {
-    return useData(['/users/schools', queryParams], getDataWithStatus);
+    return useData(['/schools', queryParams], getDataWithStatus);
 }
 
 export function useGetUserBasicInfo(id: string) {
@@ -104,7 +104,7 @@ export function useGetUserProfile(id: string) {
 }
 
 export function useGetAllIndustries(queryParams: Record<string, any> = {}) {
-    return useData([`/users/industries`, queryParams], getDataWithStatus);
+    return useData([`/industries`, queryParams], getDataWithStatus);
 }
 
 // Mutation functions
