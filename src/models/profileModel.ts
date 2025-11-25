@@ -1,3 +1,5 @@
+import { FeelingResponse } from "./likeModel";
+
 export enum AuthorType {
     USER = 'USER',
     COMPANY = 'COMPANY'
@@ -20,6 +22,8 @@ export interface MediaItem {
 }
 
 export interface CreatePostDTO {
+    author_id: string;
+    author_type: string;
     content: string;
     media_url: MediaItem[];
     visibility: PostVisibilityType;
@@ -30,6 +34,16 @@ export interface PostResponse {
     content: string;
     media_url: MediaItem[];
     visibility: PostVisibilityType;
+    author: AuthorData;
+    created_at: string;
+    totalComments: number;
+    totalLikes: FeelingResponse[];
+}
+
+export interface AuthorData {
+    userId: string;
+    name: string;
+    avatarUrl?: string;
 }
 
 export interface Follower {

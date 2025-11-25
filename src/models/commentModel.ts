@@ -1,3 +1,6 @@
+import { FeelingResponse } from "./likeModel";
+import { AuthorData } from "./profileModel";
+
 export interface Comment {
     parentId?: string;
     authorId: string;
@@ -12,6 +15,8 @@ export interface CommentResponse {
     mediaFile?: string;
     replyCount: number;
     parentId: string | null;
+    author: AuthorData;
+    createdAt: string;
 }
 export interface CreateCommentDTO {
     postId: string;
