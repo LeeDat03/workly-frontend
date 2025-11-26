@@ -23,12 +23,20 @@ import { useRouter } from 'next/navigation';
 interface PostCardProps {
     post: PostResponse;
     reload: () => void;
-    type: string;
+    type?: 'USER' | 'COMPANY';
     authorId: string;
     openPopupEdit: () => void;
+    isFeed?: boolean;
 }
 
-const PostCard = ({ post, reload, type, authorId, openPopupEdit }: PostCardProps) => {
+const PostCard = ({
+    post,
+    reload,
+    type,
+    authorId,
+    openPopupEdit,
+    isFeed = false,
+}: PostCardProps) => {
     const router = useRouter();
     const [liked, setLiked] = useState(false);
     const [commentOpen, setCommentOpen] = useState(false);
@@ -60,9 +68,9 @@ const PostCard = ({ post, reload, type, authorId, openPopupEdit }: PostCardProps
             openPopupEdit();
             reload();
         } catch (err) {
-            toast.error("edit post fail");
+            toast.error('edit post fail');
         }
-    }
+    };
     const handleLike = async () => {
         if (!currentUser?.userId) {
             alert('Bạn cần đăng nhập');
@@ -90,20 +98,28 @@ const PostCard = ({ post, reload, type, authorId, openPopupEdit }: PostCardProps
 
     const handleDelete = async () => {
         try {
-            await ProfileService.deletePost(post._id, type, authorId);
-            toast.success('Delete post success');
-            reload();
+            if (type) {
+                await ProfileService.deletePost(post._id, type, authorId);
+                toast.success('Delete post success');
+                reload();
+            }
         } catch (error) {
             toast.error('Delete post failed');
         }
     };
 
     return (
-        <article className="rounded-3xl border border-border/40 bg-white/80 p-6 shadow-[0_25px_60px_-30px_rgba(15,23,42,0.45)] backdrop-blur dark:border-white/10 dark:bg-slate-950/70">
+        <article className="rounded-3xl border border-border/40 bg-white/80 p-6 shadow-md backdrop-blur dark:border-white/10 dark:bg-slate-950/70">
             <header className="flex items-start justify-between gap-4">
                 <div
                     className="flex items-start gap-2 cursor-pointer"
-                    onClick={() => router.push(`/profile/${post.author?.id}`)}
+                    onClick={() => {
+                        if (type === 'USER') {
+                            router.push(`/profile/${post.author?.id}`);
+                        } else {
+                            router.push(`/company/${post.author?.id}`);
+                        }
+                    }}
                 >
                     <Avatar className="h-12 w-12">
                         {post.author?.imageUrl && (
@@ -133,40 +149,41 @@ const PostCard = ({ post, reload, type, authorId, openPopupEdit }: PostCardProps
                     </div>
                 </div>
 
-                <div className="relative flex items-center gap-2">
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className="rounded-full"
-                        onClick={() => setMenuOpen((prev) => !prev)}
-                    >
-                        <MoreHorizontal className="h-4 w-4" />
-                    </Button>
+                {!isFeed && (
+                    <div className="relative flex items-center gap-2">
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            className="rounded-full"
+                            onClick={() => setMenuOpen((prev) => !prev)}
+                        >
+                            <MoreHorizontal className="h-4 w-4" />
+                        </Button>
 
-                    {menuOpen && (
-                        <div className="absolute right-0 top-10 z-50 min-w-[160px] rounded-2xl border border-border/60 bg-background p-2 shadow-xl">
-                            <button
-                                className="w-full rounded-xl px-3 py-2 text-left text-sm hover:bg-muted"
-                                onClick={() => {
-                                    setMenuOpen(false);
-                                    onEdit();
-
-                                }}
-                            >
-                                Edit
-                            </button>
-                            <button
-                                className="w-full rounded-xl px-3 py-2 text-left text-sm text-red-500 hover:bg-muted"
-                                onClick={() => {
-                                    setMenuOpen(false);
-                                    handleDelete();
-                                }}
-                            >
-                                Delete
-                            </button>
-                        </div>
-                    )}
-                </div>
+                        {menuOpen && (
+                            <div className="absolute right-0 top-10 z-50 min-w-[160px] rounded-2xl border border-border/60 bg-background p-2 shadow-xl">
+                                <button
+                                    className="w-full rounded-xl px-3 py-2 text-left text-sm hover:bg-muted"
+                                    onClick={() => {
+                                        setMenuOpen(false);
+                                        onEdit();
+                                    }}
+                                >
+                                    Edit
+                                </button>
+                                <button
+                                    className="w-full rounded-xl px-3 py-2 text-left text-sm text-red-500 hover:bg-muted"
+                                    onClick={() => {
+                                        setMenuOpen(false);
+                                        handleDelete();
+                                    }}
+                                >
+                                    Delete
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                )}
             </header>
 
             <div className="mt-5 space-y-4 text-sm text-foreground/90">

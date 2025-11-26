@@ -44,6 +44,7 @@ export interface PostResponse {
     media_url: MediaItem[];
     visibility: PostVisibilityType;
     author: AuthorData;
+    author_type: AuthorType;
     created_at: string;
     totalComments: number;
     totalLikes: FeelingResponse[];

@@ -34,4 +34,5 @@ export const apiPaths = {
     getCommentById: "/posts/comment",
     getAllComment: "/posts/comment/list",
     getPostById: (id: string) => `/api/posts/${id}`,
+    getFeed: '/feed',
 };
