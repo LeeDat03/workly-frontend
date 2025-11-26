@@ -29,9 +29,10 @@ interface PostProps {
     reload: any;
     type: string;
     authorId: string;
+    openPopupEdit: any
 }
 
-const Post = ({ post, reload, type, authorId }: PostProps) => {
+const Post = ({ post, reload, type, authorId, openPopupEdit }: PostProps) => {
     const [liked, setLiked] = useState(false);
     const [commentOpen, setCommentOpen] = useState(false);
     const [open, setOpen] = useState(false);
@@ -39,8 +40,6 @@ const Post = ({ post, reload, type, authorId }: PostProps) => {
     const [totalComment, setTotalComment] = useState(0);
     const [totalLikes, setTotalLikes] = useState<string[]>(post.totalLikes.map(l => l.authorId));
     const { isLoading: isLoadingAuth, user: currentUser } = useAuth();
-    console.log("post", post);
-
 
     useEffect(() => {
         setLiked(totalLikes?.includes(currentUser?.userId ?? "") || false)
@@ -78,8 +77,16 @@ const Post = ({ post, reload, type, authorId }: PostProps) => {
             toast.error("delete post fail");
         }
     };
+    const onEdit = async () => {
+        try {
+            openPopupEdit();
+            reload();
+        } catch (err) {
+            toast.error("edit post fail");
+        }
+    }
     const handleLike = async () => {
-        if (!currentUser?.userId) return alert("Bạn cần đăng nhập");
+        if (!currentUser?.userId) { toast.warning("login is required"); return; };
 
         if (liked) {
             await likeService.unlikePost(post._id).then(() => {
@@ -149,7 +156,7 @@ const Post = ({ post, reload, type, authorId }: PostProps) => {
                             className="block w-full text-left px-4 py-2 hover:bg-gray-100"
                             onClick={() => {
                                 setOpen(false);
-                                // onEdit();
+                                onEdit();
                             }}
                         >
                             Edit
